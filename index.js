@@ -18,13 +18,17 @@ async function run(){
     try{
         await client.connect();
         const database = client.db("glassyMart");
-        const allEvents = database.collection("services");
+        const allServices = database.collection("services");
 
         app.post('/services', async(req, res) => {
+            console.log('done');
             const data = req.body;
-            const result = await allEvents.insertOne(data);
+            const result = await allServices.insertOne(data);
             res.send(result);
-            console.log('posted data');
+        })
+        app.get('/services', async(req, res) => {
+            const result = await allServices.find({}).toArray();
+            res.send(result);
         })
     }
     finally{
