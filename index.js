@@ -18,8 +18,9 @@ async function run() {
   try {
     await client.connect();
     const database = client.db("glassyMart");
+    const allUsers = database.collection('users');
     const allServices = database.collection("services");
-    const allOrders = database.collection("orders")
+    const allOrders = database.collection("orders");
 
     // post service
     app.post('/services', async (req, res) => {
@@ -49,6 +50,21 @@ async function run() {
       res.send(result);
       console.log('posted data');
     })
+    // get order data
+    app.get('/orders', async (req, res) => {
+      const result = await allOrders.find({}).toArray();
+      res.send(result);
+    })
+
+    //
+    app.post('/users', async (req, res) => {
+      const data = req.body;
+      const result = await allUsers.insertOne(data);
+      res.send(result);
+      console.log('posted data');
+    })
+
+
   }
   finally {
     //await client.close();
