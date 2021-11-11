@@ -14,26 +14,45 @@ app.use(express.json());
 var uri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-shard-00-00.u39pp.mongodb.net:27017,cluster0-shard-00-01.u39pp.mongodb.net:27017,cluster0-shard-00-02.u39pp.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-8558zv-shard-0&authSource=admin&retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-async function run(){
-    try{
-        await client.connect();
-        const database = client.db("glassyMart");
-        const allServices = database.collection("services");
+async function run() {
+  try {
+    await client.connect();
+    const database = client.db("glassyMart");
+    const allServices = database.collection("services");
+    const allOrders = database.collection("orders")
 
-        app.post('/services', async(req, res) => {
-            console.log('done');
-            const data = req.body;
-            const result = await allServices.insertOne(data);
-            res.send(result);
-        })
-        app.get('/services', async(req, res) => {
-            const result = await allServices.find({}).toArray();
-            res.send(result);
-        })
-    }
-    finally{
-       //await client.close();
-    }
+    // post service
+    app.post('/services', async (req, res) => {
+      console.log('done');
+      const data = req.body;
+      const result = await allServices.insertOne(data);
+      res.send(result);
+    })
+
+    // get services
+    app.get('/services', async (req, res) => {
+      const result = await allServices.find({}).toArray();
+      res.send(result);
+    })
+
+    // get single service using query
+    app.get('/singleService/:id', async (req, res) => {
+      const result = await allServices.findOne({ _id: ObjectId(req.params.id) });
+      res.send(result);
+      console.log('got single data');
+    })
+
+    // post order data
+    app.post('/orders', async (req, res) => {
+      const data = req.body;
+      const result = await allOrders.insertOne(data);
+      res.send(result);
+      console.log('posted data');
+    })
+  }
+  finally {
+    //await client.close();
+  }
 }
 run().catch(console.dir);
 
