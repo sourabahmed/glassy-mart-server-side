@@ -21,6 +21,7 @@ async function run() {
     const allUsers = database.collection('users');
     const allServices = database.collection("services");
     const allOrders = database.collection("orders");
+    const allReview = database.collection("review");
 
     // post service
     app.post('/services', async (req, res) => {
@@ -91,6 +92,19 @@ async function run() {
         isAdmin= true;
       }
       res.send({admin: isAdmin});
+    })
+
+    // add review
+    app.post('/review', async (req, res) => {
+      const data = req.body;
+      const result = await allReview.insertOne(data);
+      res.send(result);
+    })
+
+     // get review
+     app.get('/review', async (req, res) => {
+      const result = await allReview.find({}).toArray();
+      res.send(result);
     })
 
   }
