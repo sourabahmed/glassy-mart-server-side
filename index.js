@@ -71,6 +71,28 @@ async function run() {
       console.log('orders deleted');
   })
 
+
+  // add admin
+    app.put('/users/admin', async(req, res) => {
+      const user = req.body;
+      const filter = {email: user.email};
+      const update = {$set: {role: 'admin'}};
+      const result = await allUsers.updateOne(filter, update);
+      res.send(result)
+    })
+
+    // get users
+    app.get('/users/:email', async(req, res) => {
+      const email = req.params.email;
+      const query = {email: email};
+      const user = await allUsers.findOne(query);
+      let isAdmin = false;
+      if(user?.role === 'admin'){
+        isAdmin= true;
+      }
+      res.send({admin: isAdmin});
+    })
+
   }
   finally {
     //await client.close();
