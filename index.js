@@ -56,7 +56,7 @@ async function run() {
       res.send(result);
     })
 
-    //
+    // add user to database
     app.post('/users', async (req, res) => {
       const data = req.body;
       const result = await allUsers.insertOne(data);
@@ -64,6 +64,12 @@ async function run() {
       console.log('posted data');
     })
 
+    // delete order
+    app.delete('/deleteOrder/:id', async(req, res) => {
+      const result = await allOrders.deleteOne({_id:ObjectId(req.params.id)})
+      res.send(result);
+      console.log('orders deleted');
+  })
 
   }
   finally {
